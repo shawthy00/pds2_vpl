@@ -1,141 +1,69 @@
 #include <iostream>
-#include <string>
 #include <fstream>
-#include <random>
+#include <vector>
+#include <string>
+#include <set>
 
 using namespace std;
 
-// funcoes
+int main() {
 
-int num_palavras(string arq)
-{
-    ifstream arquivo(arq, fstream::in);
+    ifstream arquivo("palavras.txt");
 
-    string topo_string;
-    int topo;
+    int n;
+    arquivo >> n;
 
-    getline(arquivo, topo_string);
-    topo = stoi(topo_string);   // transformando em a variavel em int;
+    vector<string> palavras(n);
 
-    arquivo.close();
-
-    return topo;
-}
-
-/* funcao desativada pq nao é o caso, o usuário da entrada no numero da palavra
-int numero_aleatorio(int max) {
-
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_int_distribution<> dis(0, max);
-    return dis(gen);
-}
-*/
-
-int escolhe_numero(int max) {
-
-    int num;
-
-    cout << "Escolha um numero entre 1 e " << max << ": ";
-    cin >> num;
-
-    while (num < 1 || num > max) {
-        cout << "Numero invalido. Digite novamente: ";
-        cin >> num;
+    for (int i = 0; i < n; i++) {
+        arquivo >> palavras[i];
     }
 
-    return num;
-}
+    int escolha;
+    cin >> escolha;
 
-string palavra_lista(string arq, int num_escolhido) {
+    string chave = palavras[escolha - 1];
 
-    ifstream arquivo(arq, fstream::in);
-    string palavra;
+    set<char> erros;  // letras que não estão na palavra
 
-    getline(arquivo, palavra); // pula a primeira linha (numero)
+    for (int tentativa = 0; tentativa < 5; tentativa++) {
 
-    // for vai iterar até achar a palvra escolhida
-    for( int i = 1; i <= num_escolhido; i++) {
-        getline(arquivo, palavra);
-    } 
-    
-    return palavra;
-}
+        string palpite;
+        cin >> palpite;
 
-string to_upper(string palavra) {
-    for (int i = 0; i < palavra.length(); i++) {
-        palavra[i] = toupper(palavra[i]);
-    }
-    return palavra;
-}
+        string resultado = "";
 
-string coleta_usuario() {
-    string palavra_user;
-    cout << "Digite uma palavra de 5 letras: ";
-    cin >> palavra_user;
+        for (int i = 0; i < 5; i++) {
 
-    while (palavra_user.length() != 5) {
-        cout << "Palavra deve conter 5 letras. Digite novamente: ";
-        cin >> palavra_user;
-    }
-
-    return to_upper(palavra_user);
-}
-
-void laco_tentativas(string chave) {
-
-    int tentativas = 1;
-    string erros = "";
-
-    while (tentativas <= 5) {
-
-        string palavra_user = coleta_usuario();
-        string saida = "";
-
-        for (int i = 0; i < palavra_user.length(); i++) {
-
-            if (palavra_user[i] == chave[i]) {
-                saida += palavra_user[i];
+            if (palpite[i] == chave[i]) {
+                resultado += palpite[i];
             }
-            else if (chave.find(palavra_user[i]) != string::npos) {
-                saida += tolower(palavra_user[i]);
+
+            else if (chave.find(palpite[i]) != string::npos) {
+                resultado += tolower(palpite[i]);
             }
+
             else {
-                saida += '*';
-
-                if (erros.find(palavra_user[i]) == string::npos) {
-                    erros += palavra_user[i];
-                }
+                resultado += '*';
+                erros.insert(palpite[i]);
             }
         }
 
-        cout << saida << " (" << erros << ")" << endl;
+        cout << resultado << " (";
 
-        if (palavra_user == chave) {
-            cout << "GANHOU!" << endl;
-            return;
+        for (char c : erros) {
+            cout << c;
         }
 
-        tentativas++;
+        cout << ")" << endl;
+
+        if (palpite == chave) {
+            cout << "GANHOU!" << endl;
+            return 0;
+        }
     }
 
     cout << "PERDEU! " << chave << endl;
-}
-
-// mantendo a funcao mais limpa possivel, 
-//por isso tudo mais foi colocado em funcoes. 
-//Evoluindo usaria POO.
-int main() {
-
-    string file = "palavras.txt";
-
-    int linhas = num_palavras(file);
-
-    int num_escolhido = escolhe_numero(linhas);
-
-    string chave = palavra_lista(file, num_escolhido);
-
-    laco_tentativas(chave);
 
     return 0;
 }

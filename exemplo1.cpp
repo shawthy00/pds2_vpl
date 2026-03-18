@@ -1,16 +1,21 @@
 #include <iostream>
 #include <string>
 
-//using namespace std;
+using namespace std;
+
+void incrementar(int* x) { *x = *x + 1; }
+
+void incrementar_p(int* x) { *x = *(x + 1); }
 
 int main() {
-    std::string curto = "Hello mundão";
-    std::string longo = "Hello mundão, como vai você?";
 
-    std::cout << "Curto: " << curto << std::endl;
-    std::cout << "Longo: " << longo << std::endl;
+    int v[3] = {10, 20, 30};
+    int* x = v;
 
-    std::cout << longo.length() << std::endl;
-
-    return 0;
+    cout << v << endl;
+    cout << x << endl;
+    cout << *x << endl;
+    cout << *(x + 1) << endl;
+    cout << *v << endl;
+    cout << *(v + 1) << endl;
 }
